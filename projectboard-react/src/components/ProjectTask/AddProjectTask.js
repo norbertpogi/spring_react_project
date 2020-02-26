@@ -1,7 +1,34 @@
 import React, { Component } from 'react'
 import {Link} from 'react-router-dom';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import {addProjectTask} from '../../actions/projectTaskActions';
+//import classnames from 'classnames'; 
 
 class AddProjectTask extends Component {
+
+state = {
+    summary: "",
+    acceptanceCriteria: "",
+    status: ""
+};
+onChange = this.onChange.bind(this);
+onSubmit = this.onSubmit.bind(this);
+
+onChange(e) {
+    this.setState({[e.target.name] : e.target.value})
+}
+
+onSubmit(e) {
+e.preventDefault();
+const newProject = {
+    summary: this.state.summary,
+    acceptanceCriteria: this.state.acceptanceCriteria,
+    status: this.state.status
+};
+this.props.addProjectTask(newProject, this.props.history)
+}
+
     render() {
         return (
             <div className="addProjectTask">
@@ -9,20 +36,28 @@ class AddProjectTask extends Component {
                     <div className="row">
                         <div className="col-md-8 m-auto">
                             <Link to ="/">Back to Board</Link>
-                            {
-                              //  <a href="/ProjectBoard.html" className="btn btn-light">Back to Board</a>
-                            } 
                             <h4 className="display-4 text-center">Add /Update Project Task</h4>
-                            <form>
+                            <form onSubmit={this.onSubmit}>
                                 <div className="form-group">
-                                    <input type="text" className="form-control form-control-lg" name="summary" placeholder="Project Task summary" />
+                                    <input type="text" className="form-control form-control-lg" name="summary" 
+                                    placeholder="Project Task summary"
+                                    value={this.state.summary} 
+                                    onChange={this.onChange}
+                                    />
                                 </div>
                                 <div className="form-group">
-                                    <textarea className="form-control form-control-lg" placeholder="Acceptance Criteria" name="acceptanceCriteria"></textarea>
+                                    <textarea className="form-control form-control-lg" 
+                                    placeholder="Acceptance Criteria" 
+                                    name="acceptanceCriteria"
+                                    value={this.state.acceptanceCriteria}
+                                    onChange={this.onChange}/>
                                 </div>
                                 <div className="form-group">
-                                    <select className="form-control form-control-lg" name="status">
-                                        <option value="">Select Status</option>
+                                    <select className="form-control form-control-lg" 
+                                    name="status"
+                                    value={this.state.status}
+                                    onChange={this.onChange}>
+                                        <option value="">{this.state.status}</option>
                                         <option value="TO_DO">TO DO</option>
                                         <option value="IN_PROGRESS">IN PROGRESS</option>
                                         <option value="DONE">DONE</option>
@@ -38,4 +73,13 @@ class AddProjectTask extends Component {
     }
 }
 
-export default AddProjectTask;
+AddProjectTask.propTypes = {
+    addProjectTask: PropTypes.func.isRequired,
+    errors: PropTypes.object.isRequired
+}
+
+const mapStateToProps = state => ({
+    errors: state.errors    
+})
+
+export default connect(mapStateToProps, {addProjectTask}) (AddProjectTask);
