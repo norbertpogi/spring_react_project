@@ -48,7 +48,7 @@ public class PorjectTaskController {
 		return new ResponseEntity<ProjectTask>(newP, HttpStatus.CREATED);
 	}
 	
-	@GetMapping("")
+	@GetMapping("/all")
 	public ResponseEntity<Iterable<ProjectTask>> getAllProjectTask() {
 		Iterable<ProjectTask> list = projectTaskServices.getAllProjectTaskBoard();
 		return new ResponseEntity<Iterable<ProjectTask>>(list, new HttpHeaders(), HttpStatus.OK);
