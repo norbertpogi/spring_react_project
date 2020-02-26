@@ -1,9 +1,21 @@
 import axios from 'axios';
+import { GET_ERRORS } from './types';
 
 const api_endpoint = 'http://localhost:8080/api/board';
 
 export const addProjectTask = (project_task, history) => async dispatch => {
-    await axios.post(api_endpoint, project_task);
-    history.push('/');
+    try {
+        await axios.post(api_endpoint, project_task);
+        history.push('/');
+        dispatch({
+            type: GET_ERRORS,
+            payload: {}
+        });
+    } catch (error) {
+        dispatch({
+            type: GET_ERRORS,
+            payload: error.response.data
+        });
+    }
 };
 

@@ -1,62 +1,71 @@
 import React, { Component } from 'react'
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import {addProjectTask} from '../../actions/projectTaskActions';
-//import classnames from 'classnames'; 
+import { connect } from 'react-redux';
+import { addProjectTask } from '../../actions/projectTaskActions';
+import classnames from 'classnames'; 
 
 class AddProjectTask extends Component {
 
-state = {
-    summary: "",
-    acceptanceCriteria: "",
-    status: ""
-};
-onChange = this.onChange.bind(this);
-onSubmit = this.onSubmit.bind(this);
+    state = {
+        summary: "",
+        acceptanceCriteria: "",
+        status: "",
+        errors: {}
+    };
+    onChange = this.onChange.bind(this);
+    onSubmit = this.onSubmit.bind(this);
 
-onChange(e) {
-    this.setState({[e.target.name] : e.target.value})
-}
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.errors) {
+            this.setState({ errors: nextProps.errors });
+        }
+    }
 
-onSubmit(e) {
-e.preventDefault();
-const newProject = {
-    summary: this.state.summary,
-    acceptanceCriteria: this.state.acceptanceCriteria,
-    status: this.state.status
-};
-this.props.addProjectTask(newProject, this.props.history)
-}
+    onChange(e) {
+        this.setState({ [e.target.name]: e.target.value })
+    }
+
+    onSubmit(e) {
+        e.preventDefault();
+        const newProject = {
+            summary: this.state.summary,
+            acceptanceCriteria: this.state.acceptanceCriteria,
+            status: this.state.status
+        };
+        this.props.addProjectTask(newProject, this.props.history)
+    }
 
     render() {
+        const {errors} = this.state;
         return (
             <div className="addProjectTask">
                 <div className="container">
                     <div className="row">
                         <div className="col-md-8 m-auto">
-                            <Link to ="/">Back to Board</Link>
+                            <Link to="/">Back to Board</Link>
                             <h4 className="display-4 text-center">Add /Update Project Task</h4>
                             <form onSubmit={this.onSubmit}>
                                 <div className="form-group">
-                                    <input type="text" className="form-control form-control-lg" name="summary" 
-                                    placeholder="Project Task summary"
-                                    value={this.state.summary} 
-                                    onChange={this.onChange}
+                                    <input type="text" className={classnames("form-control form-control-lg", {"is-invalid": errors.summary})} name="summary"
+                                        placeholder="Project Task summary"
+                                        value={this.state.summary}
+                                        onChange={this.onChange}
                                     />
+                                    {errors.summary && (<div className="invalid-feedback">{errors.summary}</div>)}
                                 </div>
                                 <div className="form-group">
-                                    <textarea className="form-control form-control-lg" 
-                                    placeholder="Acceptance Criteria" 
-                                    name="acceptanceCriteria"
-                                    value={this.state.acceptanceCriteria}
-                                    onChange={this.onChange}/>
+                                    <textarea className="form-control form-control-lg"
+                                        placeholder="Acceptance Criteria"
+                                        name="acceptanceCriteria"
+                                        value={this.state.acceptanceCriteria}
+                                        onChange={this.onChange} />
                                 </div>
                                 <div className="form-group">
-                                    <select className="form-control form-control-lg" 
-                                    name="status"
-                                    value={this.state.status}
-                                    onChange={this.onChange}>
+                                    <select className="form-control form-control-lg"
+                                        name="status"
+                                        value={this.state.status}
+                                        onChange={this.onChange}>
                                         <option value="">{this.state.status}</option>
                                         <option value="TO_DO">TO DO</option>
                                         <option value="IN_PROGRESS">IN PROGRESS</option>
@@ -79,7 +88,7 @@ AddProjectTask.propTypes = {
 }
 
 const mapStateToProps = state => ({
-    errors: state.errors    
+    errors: state.errors
 })
 
-export default connect(mapStateToProps, {addProjectTask}) (AddProjectTask);
+export default connect(mapStateToProps, { addProjectTask })(AddProjectTask);
